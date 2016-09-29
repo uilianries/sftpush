@@ -62,7 +62,7 @@ public class SFTPushClientTest {
     /**
      * SSH Server port
      */
-    private static final int PORT = 0;
+    private static final int PORT = 22000;
 
     /**
      * SSH Server handle
@@ -120,7 +120,7 @@ public class SFTPushClientTest {
         final Path path = Paths.get(HOME_DIR.toString(), FILE_NAME);
         Files.write(path, contents.getBytes());
 
-        final int port = this.SSHSERVER.getPort();
+        final int port = SSHSERVER.getPort();
         final PushConfig pushConfig = new PushConfig(HOST, USERNAME, PASSWORD, port);
         final SFTPushClient sftPushClient = new SFTPushClient(pushConfig);
 
@@ -134,7 +134,7 @@ public class SFTPushClientTest {
         final String contents = "foobar";
         final InputStream stream = new ByteArrayInputStream(contents.getBytes());
         final Path path = Paths.get(HOME_DIR.toString(), FILE_NAME);
-        final int port = this.SSHSERVER.getPort();
+        final int port = SSHSERVER.getPort();
         final PushConfig pushConfig = new PushConfig(HOST, USERNAME, PASSWORD, port);
         final SFTPushClient sftPushClient = new SFTPushClient(pushConfig);
 
