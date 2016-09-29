@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 
@@ -130,17 +132,20 @@ public class SFTPushClientTest {
     }
 
     @Test
-    public void commitStream() throws SftpException, JSchException {
+    public void commitStream() throws SftpException, JSchException, IOException {
         final String contents = "foobar";
-        final InputStream stream = new ByteArrayInputStream(contents.getBytes());
+        final InputStream stream = new ByteArrayInputStream(contents.getBytes(Charset.defaultCharset()));
         final Path path = Paths.get(HOME_DIR.toString(), FILE_NAME);
         final int port = SSHSERVER.getPort();
         final PushConfig pushConfig = new PushConfig(HOST, USERNAME, PASSWORD, port);
         final SFTPushClient sftPushClient = new SFTPushClient(pushConfig);
 
         sftPushClient.sendFile(stream, path);
+        stream.close();
 
         assertTrue(Files.exists(path));
+        final String outputContents = new String(Files.readAllBytes(path));
+        assertEquals(contents, outputContents);
     }
 
     /**
