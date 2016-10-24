@@ -12,6 +12,7 @@ import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -118,6 +119,9 @@ public class SFTPushClientTest {
      */
     @Test
     public void commitFile() throws JSchException, SftpException, InterruptedException, IOException {
+    	
+    	Assume.assumeTrue(isUnix());
+    	
         final String contents = "foobar";
         final Path path = Paths.get(HOME_DIR.toString(), FILE_NAME);
         Files.write(path, contents.getBytes());
@@ -132,7 +136,10 @@ public class SFTPushClientTest {
     }
 
     @Test
-    public void commitStream() throws SftpException, JSchException, IOException {
+    public void commitStream() throws SftpException, JSchException {
+    	
+    	Assume.assumeTrue(isUnix());
+    	
         final String contents = "foobar";
         final InputStream stream = new ByteArrayInputStream(contents.getBytes(Charset.defaultCharset()));
         final Path path = Paths.get(HOME_DIR.toString(), FILE_NAME);
@@ -157,4 +164,9 @@ public class SFTPushClientTest {
     public static void suiteTearDown() throws IOException {
         SSHSERVER.stop();
     }
+    
+	private static boolean isUnix() {
+		final String os = System.getProperty("os.name").toLowerCase();
+		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0 );
+	}
 }
